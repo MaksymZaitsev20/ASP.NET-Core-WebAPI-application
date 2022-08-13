@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Task2.Data;
 using Task2.Data.DataModels;
 
@@ -74,7 +73,7 @@ namespace Task2.Controllers
         [HttpDelete("books/{id}")]
         public async Task<ActionResult<BookDTO>> Delete(int id, string secretKey)
         {
-            var result = await DbManager.Delete(id, secretKey);
+            var result = await DbManager.DeleteAsync(id, secretKey);
 
             return result == null ? Forbid() : new OkObjectResult(result);
         }

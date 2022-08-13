@@ -266,7 +266,7 @@ namespace Task2.Data
 
             return result;
         }
-        public static async Task<BookDetailDTO?> Delete(int id, string secretKey)
+        public static async Task<BookDetailDTO?> DeleteAsync(int id, string secretKey)
         {
             BookDetailDTO? book = null;
 
