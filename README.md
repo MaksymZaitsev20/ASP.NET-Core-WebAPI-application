@@ -1,9 +1,9 @@
 # WebApplication
 
-Your task is to create an ASP.NET Core WebAPI application and design a model for the library. In this task you can use layered architecture to separate different parts of the app. Keep it simple but cover all requirements. Here is a list of steps you need to go through:
-Connect Entity Framework Core and use in-memory database. Create classes and relationships for all tables from pic. 1. Make sure to register them in EntityFramework.
+The ASP.NET Core WebAPI application and the model for the library. Layered architecture to separate different parts of the app. Keep it simple but cover all requirements. Here is a list of steps you need to go through:
+Connecting Entity Framework Core and using database. Creating classes and relationships for all tables.Registering them in EntityFramework.
 
-Implement the following API:
+Implemention the following API:
 @baseUrl = localhost:5000
 
 
@@ -90,15 +90,15 @@ PUT https://{{baseUrl}}/api/books/{id}/rate
 }
 
 
-Validate all values that come into your app (query params, body, etc)
+Validating all values that come into your app (query params, body, etc)
 
-Return an appropriate status code for every response.
+Returning an appropriate status code for every response.
 
-Connect middlewares for error handling and logging. Log every request in a simple format (make sure to log HTTP method,  headers, query params and body) in the console (you can also use other outputs).
+Connecting middlewares for error handling and logging. Logging every request in a simple format (make sure to log HTTP method,  headers, query params and body) in the console.
 Notes:
-Do not create instances (DbContext, services, mappers) manually via “new()”. Use Dependency Injection instead.  
-You don’t need to create migrations. Instead you may add a data seeding. For better testing seed data for 10 books.
-Use DTO for all requests and responses. Do not put entities in the response. You can use Automapper to simplify the mapping process.
-In order to implement validation you can use the Fluent Validation package. Feel free to come up with your own rules. 
-Use async/await wherever possible (Controllers should return Task<TResult>)
-To test the endpoints you can use either Postman or this extension for Visual Studio Code. The format of the requests above is supported by this extension.
+Not creating instances (DbContext, services, mappers) manually via “new()”. Using Dependency Injection instead.  
+Instead added a data seeding. For better testing seeded data for 10 books.
+Using DTO for all requests and responses (can to use Automapper). Not put entities in the response.
+In order to implement validation using the Fluent Validation package.
+Using async/await wherever possible (Controllers returns Task<TResult>)
+To test the endpoints used either Postman or this extension for Visual Studio Code. The format of the requests above is supported by this extension.
