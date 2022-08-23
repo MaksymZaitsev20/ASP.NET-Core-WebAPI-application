@@ -1,26 +1,26 @@
-﻿using Task2.Data.DataModels;
+﻿using Task2.Models;
 
 namespace Task2.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(BooksContext context)
+        public static void Initialize(BookContext context)
         {
             if (context.Books.Any())
                 return;
 
-            var books = new BookDetailDTO[]
+            var books = new BookDetailsDTO[]
             {
-                new BookDetailDTO{Title="Harry Potter", Author="J. K. Rowling", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Fantasy"},
-                new BookDetailDTO{Title="39 clues", Author="Robert Boing", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Adventure novel"},
-                new BookDetailDTO{Title="The Witcher", Author="Andrzej Sapkowski", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Fantasy"},
-                new BookDetailDTO{Title="Adventures of Sherlock Holmes", Author="Arthur Conan Doyle", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Advetures"},
-                new BookDetailDTO{Title="Dreamcatcher", Author="Stephen King", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Horror"},
-                new BookDetailDTO{Title="Don Quixote", Author="Miguel de Cervantes", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Novel"},
-                new BookDetailDTO{Title="The Great Gatsby", Author="F. Scott Fitzgerald", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Fiction"},
-                new BookDetailDTO{Title="Katerina", Author="Taras Shevchenko", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Novel"},
-                new BookDetailDTO{Title="The Gates of Europe", Author="Serhii Plokhy", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="History"},
-                new BookDetailDTO{Title="Death and the Penguin", Author="Andrey Kurkov", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="History"}
+                new BookDetailsDTO{Title="Harry Potter", Author="J. K. Rowling", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Fantasy"},
+                new BookDetailsDTO{Title="39 clues", Author="Robert Boing", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Adventure novel"},
+                new BookDetailsDTO{Title="The Witcher", Author="Andrzej Sapkowski", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Fantasy"},
+                new BookDetailsDTO{Title="Adventures of Sherlock Holmes", Author="Arthur Conan Doyle", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Advetures"},
+                new BookDetailsDTO{Title="Dreamcatcher", Author="Stephen King", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Horror"},
+                new BookDetailsDTO{Title="Don Quixote", Author="Miguel de Cervantes", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Novel"},
+                new BookDetailsDTO{Title="The Great Gatsby", Author="F. Scott Fitzgerald", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Fiction"},
+                new BookDetailsDTO{Title="Katerina", Author="Taras Shevchenko", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="Novel"},
+                new BookDetailsDTO{Title="The Gates of Europe", Author="Serhii Plokhy", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="History"},
+                new BookDetailsDTO{Title="Death and the Penguin", Author="Andrey Kurkov", Content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", Cover="cover", Genre="History"}
             };
 
             context.Books.AddRange(books);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Task2.Data;
-using Task2.Data.DataModels;
+using Task2.Services;
+using Task2.Models;
 
 namespace Task2.Controllers
 {
@@ -8,15 +8,15 @@ namespace Task2.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly ILogger<BooksController> _logger;
-
-        public BooksController(ILogger<BooksController> logger)
-            => _logger = logger;
+        BookService _service;
+        
+        public BooksController(BookService service)
+            => _service = service;
 
         [HttpGet("recommended")]
         public async Task<ActionResult<BookDTO>> GetTopBooks(string? genre)
         {
-            var result = await DbManager.GetTopBooksAsync(genre);
+            var result = await _service.GetTopBooksAsync(genre);
 
             return result == null ? NoContent() : new OkObjectResult(result);
         }
@@ -25,7 +25,7 @@ namespace Task2.Controllers
         [HttpGet("books")]
         public async Task<ActionResult<BookDTO>> GetAll(string? order = null)
         {
-            var result = await DbManager.GetAllBooksAsync(order);
+            var result = await _service.GetAllBooksAsync(order);
 
             return result == Array.Empty<BookDTO>() ? NoContent() :
                 result == null ? BadRequest() :
@@ -36,7 +36,7 @@ namespace Task2.Controllers
         [HttpGet("books/{id}")]
         public async Task<ActionResult<BookContentDTO>> GetById(int id)
         {
-            var result = await DbManager.GetBookByIdAsync(id);
+            var result = await _service.GetBookByIdAsync(id);
 
             return result == null ? NoContent() : new OkObjectResult(result);
         }
@@ -45,7 +45,7 @@ namespace Task2.Controllers
         [HttpPost("books/save")]
         public async Task<ActionResult<BookPutDTO>> Post([FromBody] BookPutDTO book)
         {
-            var result = await DbManager.PostAsync(book);
+            var result = await _service.PostAsync(book);
 
             return result == null ? BadRequest() :
                 new OkObjectResult(new { result });
@@ -55,7 +55,7 @@ namespace Task2.Controllers
         [HttpPut("books/{id}/review")]
         public async Task<ActionResult<ReviewDTO>> PutReview(int id, ReviewDTO review)
         {
-            var result = await DbManager.PutReviewAsync(id, review);
+            var result = await _service.PutReviewAsync(id, review);
 
             return result == null ? NotFound() : new OkObjectResult(result);
         }
@@ -64,7 +64,7 @@ namespace Task2.Controllers
         [HttpPut("books/{id}/rating")]
         public async Task<ActionResult<RatingDTO>> PutRating(int id, RatingDTO rating)
         {
-            var result = await DbManager.PutRatingAsync(id, rating);
+            var result = await _service.PutRatingAsync(id, rating);
 
             return result == null ? NoContent() : new OkObjectResult(result);
         }
@@ -73,7 +73,7 @@ namespace Task2.Controllers
         [HttpDelete("books/{id}")]
         public async Task<ActionResult<BookDTO>> Delete(int id, string secretKey)
         {
-            var result = await DbManager.DeleteAsync(id, secretKey);
+            var result = await _service.DeleteAsync(id, secretKey);
 
             return result == null ? Forbid() : new OkObjectResult(result);
         }

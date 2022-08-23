@@ -1,57 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Task2.Data.DataModels;
+using Task2.Models;
+using Task2.Data;
 
-namespace Task2.Data
+namespace Task2.Services
 {
-    public static class DbManager
+    public class BookService
     {
-        private static SqliteConnection connection;
-        public static BooksContext Context { get; private set; }
-        public static string SecretKey { get; private set; }
+        private readonly BookContext _context;
+        private readonly string _secretKey = String.Empty;
 
-        static DbManager()
+        public BookService(BookContext context)
         {
             var configurationBuilder = new ConfigurationBuilder();
 
             configurationBuilder.SetBasePath(Directory.GetCurrentDirectory());
             configurationBuilder.AddJsonFile("appsettings.json");
 
-            connection = new SqliteConnection(
-                configurationBuilder.Build()
-                .GetConnectionString("BooksContext"));
+            _secretKey = configurationBuilder.Build().GetValue<string>("AppSettings:SecretKey");
 
-            SecretKey = configurationBuilder.Build().GetValue<string>("AppSettings:SecretKey");
-
-            connection.Open();
-
-            Context = new BooksContext(
-                new DbContextOptionsBuilder<BooksContext>()
-                .UseSqlite(connection)
-                .Options);
-
-            if (Context.Database.EnsureCreated())
-                DbInitializer.Initialize(Context);
+            _context = context;
+            if (_context.Database.EnsureCreated() || !_context.Books.Any())
+                DbInitializer.Initialize(_context);
         }
 
-        public static async Task<IEnumerable<BookDTO>?> GetTopBooksAsync(string? genre)
+        public async Task<IEnumerable<BookDTO>?> GetTopBooksAsync(string? genre)
         {
-            IEnumerable<BookDTO> result = null;
+            IEnumerable<BookDTO>? result = null;
 
             await Task.Run(() =>
             {
                 Console.Write("GET https://localhost:5000/api/recommended");
 
-                if (Context.Books == null || Context.Books.Count() == 0)
+                if (_context.Books == null || _context.Books.Count() == 0)
                     return;
 
-                var books = Context.Books.AsEnumerable();
+                var books = _context.Books.AsEnumerable();
 
                 if (genre != null)
                 {
-                    books = books.Where(book => book.Genre.ToLower() == genre.ToLower());
+                    books = books.Where(book => book.Genre?.ToLower() == genre.ToLower());
                     Console.WriteLine($"?genre={genre}");
                 }
                 else
@@ -83,10 +71,10 @@ namespace Task2.Data
 
             return result;
         }
-        public static async Task<IEnumerable<BookDTO>> GetAllBooksAsync(string? order)
+        public async Task<IEnumerable<BookDTO>?> GetAllBooksAsync(string? order)
         {
             IEnumerable<BookDTO> result = Array.Empty<BookDTO>();
-            
+
             await Task.Run(() =>
             {
                 Console.Write("GET https://localhost:5000/api/books");
@@ -95,13 +83,13 @@ namespace Task2.Data
                 else
                     Console.WriteLine();
 
-                if (Context.Books == null || Context.Books.Count() == 0)
+                if (_context.Books == null || _context.Books.Count() == 0)
                 {
                     result = Array.Empty<BookDTO>();
                     return;
                 }
 
-                result = Context.Books.Select(
+                result = _context.Books.Select(
                     book =>
                         new BookDTO
                         {
@@ -116,17 +104,17 @@ namespace Task2.Data
                                 book.Reviews == null ? 0 : book.Reviews.Count()
                         });
             });
-            
+
             return order == null ? result :
                 order.ToLower() == "author" ? result.OrderBy(book => book.Author) :
                 order.ToLower() == "title" ? result.OrderBy(book => book.Title) :
                 null;
         }
-        public static async Task<BookContentDTO> GetBookByIdAsync(int id)
+        public async Task<BookContentDTO?> GetBookByIdAsync(int id)
         {
             Console.WriteLine($"GET https://localhost:5000/api/books/{id}");
 
-            var book = await Context.Books.FindAsync(id);
+            var book = await _context.Books.FindAsync(id);
 
             if (book == null)
                 return null;
@@ -154,7 +142,7 @@ namespace Task2.Data
                         }).ToArray()
             };
         }
-        public static async Task<int?> PostAsync(BookPutDTO book)
+        public async Task<int?> PostAsync(BookPutDTO book)
         {
             int? id = null;
             await Task.Run(() =>
@@ -165,7 +153,7 @@ namespace Task2.Data
                 if (book == null || book.Title == null || book.Author == null || book.Content == null || book.Genre == null)
                     return;
 
-                var newBook = new BookDetailDTO
+                var newBook = new BookDetailsDTO
                 {
                     Title = book.Title,
                     Author = book.Author,
@@ -176,19 +164,19 @@ namespace Task2.Data
 
                 if (book.Id == null)
                 {
-                    Context.Books.Add(newBook);
-                    id = Context.Books.ToList().Last().Id + 1; //without SaveChanges element not in db
+                    _context.Books.Add(newBook);
+                    id = _context.Books.ToList().Last().Id + 1; //without SaveChanges element not in db
                 }
                 else
                 {
-                    var foundBook = Context.Books.Find(book.Id);
+                    var foundBook = _context.Books.Find(book.Id);
 
                     if (foundBook == null)
                     {
-                        Context.Books.Add(newBook);
-                        Context.SaveChanges();
+                        _context.Books.Add(newBook);
+                        _context.SaveChanges();
 
-                        id = Context.Books.ToList().Last().Id;
+                        id = _context.Books.ToList().Last().Id;
                     }
                     else
                     {
@@ -203,12 +191,12 @@ namespace Task2.Data
 
                 }
 
-                Context.SaveChanges();
+                _context.SaveChanges();
             });
 
             return id;
         }
-        public static async Task<int?> PutReviewAsync(int id, ReviewDTO review)
+        public async Task<int?> PutReviewAsync(int id, ReviewDTO review)
         {
             int? result = null;
 
@@ -220,7 +208,7 @@ namespace Task2.Data
                 if (review == null || review.Message == null || review.Reviewer == null)
                     return;
 
-                var book = Context.Books.Find(id);
+                var book = _context.Books.Find(id);
 
                 if (book == null)
                     return;
@@ -231,13 +219,13 @@ namespace Task2.Data
                     Reviewer = review.Reviewer
                 });
 
-                Context.SaveChanges();
+                _context.SaveChanges();
                 result = book.Reviews.ToList().Last().Id;
             });
 
             return result;
         }
-        public static async Task<int?> PutRatingAsync(int id, RatingDTO rating)
+        public async Task<int?> PutRatingAsync(int id, RatingDTO rating)
         {
             int? result = null;
 
@@ -249,7 +237,7 @@ namespace Task2.Data
                 if (rating == null || rating.Score == null || rating.Score < 1 || rating.Score > 5)
                     return;
 
-                var book = Context.Books.Find(id);
+                var book = _context.Books.Find(id);
 
                 if (book == null)
                     return;
@@ -259,16 +247,16 @@ namespace Task2.Data
                     Score = rating.Score
                 });
 
-                Context.SaveChanges();
+                _context.SaveChanges();
 
                 result = book.Ratings.ToList().Last().Id;
             });
 
             return result;
         }
-        public static async Task<BookDetailDTO?> DeleteAsync(int id, string secretKey)
+        public async Task<BookDetailsDTO?> DeleteAsync(int id, string secretKey)
         {
-            BookDetailDTO? book = null;
+            BookDetailsDTO? book = null;
 
             await Task.Run(() =>
             {
@@ -278,19 +266,19 @@ namespace Task2.Data
                 else
                     Console.WriteLine();
 
-                if (secretKey == null || secretKey != SecretKey)
+                if (secretKey == null || secretKey != this._secretKey)
                     return;
 
-                if (Context.Books == null || Context.Books.Count() == 0)
+                if (_context.Books == null || _context.Books.Count() == 0)
                     return;
 
-                book = Context.Books.Find(id);
+                book = _context.Books.Find(id);
 
                 if (book == null)
                     return;
 
-                Context.Books.Remove(book);
-                Context.SaveChanges();
+                _context.Books.Remove(book);
+                _context.SaveChanges();
             });
 
             return book;
