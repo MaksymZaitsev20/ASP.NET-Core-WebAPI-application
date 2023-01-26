@@ -8,7 +8,7 @@ namespace Task2.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
@@ -22,10 +22,10 @@ namespace Task2.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Books", x => x.Id);
+                    _ = table.PrimaryKey("PK_Books", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Ratings",
                 columns: table => new
                 {
@@ -36,8 +36,8 @@ namespace Task2.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ratings", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Ratings", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Ratings_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
@@ -45,7 +45,7 @@ namespace Task2.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            _ = migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
@@ -57,8 +57,8 @@ namespace Task2.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
-                    table.ForeignKey(
+                    _ = table.PrimaryKey("PK_Reviews", x => x.Id);
+                    _ = table.ForeignKey(
                         name: "FK_Reviews_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
@@ -66,12 +66,12 @@ namespace Task2.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Ratings_BookId",
                 table: "Ratings",
                 column: "BookId");
 
-            migrationBuilder.CreateIndex(
+            _ = migrationBuilder.CreateIndex(
                 name: "IX_Reviews_BookId",
                 table: "Reviews",
                 column: "BookId");
@@ -79,13 +79,13 @@ namespace Task2.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Ratings");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Reviews");
 
-            migrationBuilder.DropTable(
+            _ = migrationBuilder.DropTable(
                 name: "Books");
         }
     }

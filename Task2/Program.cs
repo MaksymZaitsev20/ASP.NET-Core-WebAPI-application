@@ -1,7 +1,7 @@
 using Task2.Data;
 using Task2.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -11,7 +11,7 @@ builder.Services.AddSqlite<BookContext>(builder.Configuration.GetConnectionStrin
 
 builder.Services.AddScoped<BookService>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
