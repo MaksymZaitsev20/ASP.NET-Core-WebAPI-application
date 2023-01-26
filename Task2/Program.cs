@@ -1,15 +1,17 @@
 using Task2.Data;
+using Task2.Services;
 
-var webAppBuilder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-webAppBuilder.Services.AddControllers();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-webAppBuilder.Services.AddEndpointsApiExplorer();
-webAppBuilder.Services.AddSwaggerGen();
+builder.Services.AddSqlite<BookContext>(builder.Configuration.GetConnectionString("BookContext") ?? "Data Source=BookContext.db");
 
-webAppBuilder.Services.AddDbContext<BooksContext>();
+builder.Services.AddScoped<BookService>();
 
-var app = webAppBuilder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -22,5 +24,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.CreateDbIfNotExists();
 
 app.Run();
